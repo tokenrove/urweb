@@ -167,14 +167,12 @@ See doc for the variable `urweb-mode-info'."
 
 (defun urweb-in-xml ()
   (save-excursion
-    (let (
-          (depth 0)
+    (let ((depth 0)
           (finished nil)
           (answer nil)
-          (bound (max 0 (- (point) 1024)))
-          )
+          (bound (max 0 (- (point) 1024))))
       (while (and (not finished)
-                  (re-search-backward "\\(\\([-{}]\\)\\|<\\(/?xml\\)?\\)"
+                  (re-search-backward "\\(\\([-{}]\\)\\|<\\(/?xml>\\)?\\)"
                                       bound t))
         (let ((xml-tag (length (or (match-string 3) "")))
               (ch (match-string 2)))
@@ -185,13 +183,13 @@ See doc for the variable `urweb-mode-info'."
              (setq finished t)))
           ((equal ch "}")
            (incf depth))
-          ((= xml-tag 3)
+          ((= xml-tag 4)
            (if (> depth 0)
                (decf depth)
              (progn
                (setq answer t)
                (setq finished t))))
-          ((= xml-tag 4)
+          ((= xml-tag 5)
            (incf depth))
 
           ((equal ch "-")
